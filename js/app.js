@@ -34,37 +34,39 @@
   const trackCfg = window.PROPOSAL_TRACK || {};
 
   function track(eventName, title, detail) {
+    if (eventName !== "yes" && eventName !== "no") return;
+    if (eventName === "no" && noTries > 1) return;
+
     const when = new Date().toLocaleString("en-PK", { timeZone: "Asia/Karachi" });
-    const message = (detail || eventName) + " — " + when;
-    const key = "nayab-track-" + eventName;
-    if (eventName !== "no" && sessionStorage.getItem(key)) return;
-    if (eventName !== "no") sessionStorage.setItem(key, "1");
+    const payload = {
+      key: trackCfg.accessKey,
+      event: eventName,
+      title: title,
+      message: (detail || eventName) + " — " + when,
+      noTries: String(noTries)
+    };
 
     if (trackCfg.ntfyTopic) {
       fetch("https://ntfy.sh/" + trackCfg.ntfyTopic, {
         method: "POST",
         headers: {
           Title: title,
-          Priority: eventName === "yes" ? "urgent" : "default",
-          Tags: eventName === "yes" ? "ring,heart,tada" : "love_letter"
+          Priority: eventName === "yes" ? "urgent" : "default"
         },
-        body: message
+        body: payload.message
       }).catch(function () {});
     }
 
-    if (trackCfg.email) {
-      fetch("https://formsubmit.co/ajax/" + trackCfg.email, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          _subject: title,
-          _captcha: false,
-          event: eventName,
-          message: message,
-          noTries: String(noTries)
-        })
-      }).catch(function () {});
-    }
+    if (!trackCfg.smtpEndpoint) return;
+
+    fetch(trackCfg.smtpEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).catch(function () {
+      var q = new URLSearchParams(payload).toString();
+      fetch(trackCfg.smtpEndpoint + "?" + q, { mode: "no-cors" }).catch(function () {});
+    });
   }
 
   function showScene(id) {
@@ -180,7 +182,6 @@
   }
 
   document.getElementById("btn-begin").addEventListener("click", () => {
-    track("opened", "Nayab opened the letter", "She tapped Open with your heart");
     showScene("scene-envelope");
   });
 
@@ -197,7 +198,6 @@
   });
 
   document.getElementById("btn-to-question").addEventListener("click", () => {
-    track("question", "Nayab reached the question", "She is on Will you marry me?");
     showScene("scene-question");
   });
 
@@ -208,5 +208,4 @@
   window.addEventListener("resize", resize);
   resize();
   tick();
-  track("visit", "Nayab opened the page", "The proposal page was opened");
 })();

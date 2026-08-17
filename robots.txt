@@ -1,2 +1,2 @@
 User-agent: *
-Disallow: /watch.html
+Disallow: /

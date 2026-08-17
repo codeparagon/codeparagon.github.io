@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nayab — answers</title>
-  <meta name="robots" content="noindex" />
+  <title>Private</title>
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <script>
+    window.LETTER_KEY = "nayab-k7m2p9";
+    (function () {
+      try {
+        if (new URLSearchParams(location.search).get("to") !== window.LETTER_KEY) {
+          document.documentElement.classList.add("locked");
+        }
+      } catch (e) {
+        document.documentElement.classList.add("locked");
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Cormorant+Garamond:ital,wght@0,500;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
@@ -60,6 +72,9 @@
   </style>
 </head>
 <body>
+  <div id="lock">
+    <p>This page is private.</p>
+  </div>
   <canvas id="petals" aria-hidden="true"></canvas>
   <div class="vignette" aria-hidden="true"></div>
   <main class="watch">
@@ -79,6 +94,9 @@
   </main>
   <script src="js/config.js"></script>
   <script>
+    if (document.documentElement.classList.contains("locked")) {
+      /* stay on the private screen */
+    } else {
     const cfg = window.PROPOSAL_TRACK;
     const logEl = document.getElementById("log");
     const canvas = document.getElementById("petals");
@@ -124,6 +142,7 @@
       if (e.key === "Enter") unlock();
     });
     document.getElementById("refresh").addEventListener("click", load);
+    }
   </script>
 </body>
 </html>

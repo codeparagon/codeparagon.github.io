@@ -1,4 +1,7 @@
 (function () {
+  if (document.documentElement.classList.contains("locked")) return;
+  document.title = "For Nayab — A Letter From My Heart";
+
   const scenes = Array.from(document.querySelectorAll(".scene"));
   const envelope = document.getElementById("envelope");
   const letterBody = document.getElementById("letter-body");

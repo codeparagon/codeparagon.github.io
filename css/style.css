@@ -1,3 +1,23 @@
+html.locked body > *:not(#lock) {
+  display: none !important;
+}
+
+#lock {
+  display: none;
+}
+
+html.locked #lock {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  align-items: center;
+  justify-content: center;
+  background: #0c0508;
+  color: rgba(247, 239, 228, 0.45);
+  font-style: italic;
+}
+
 :root {
   --night: #0c0508;
   --wine: #4a1020;

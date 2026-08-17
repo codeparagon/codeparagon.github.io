@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Nayab — A Letter From My Heart</title>
+  <meta name="description" content="A private letter for Nayab. Open it when you are ready." />
+  <meta name="theme-color" content="#1a0a10" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌹</text></svg>" />
+</head>
+<body>
+  <canvas id="petals" aria-hidden="true"></canvas>
+  <div class="gold-dust" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- SCENE: GATE -->
+  <section class="scene active" id="scene-gate" data-scene="gate">
+    <div class="moon" aria-hidden="true"></div>
+    <div class="gate-inner">
+      <p class="eyebrow">A private letter</p>
+      <h1 class="script-name">Nayab</h1>
+      <p class="urdu urdu-lg">نایاب</p>
+      <p class="gate-line">rare. precious. the only one.</p>
+      <button class="btn gold" id="btn-begin" type="button">
+        Open with your heart
+      </button>
+    </div>
+  </section>
+
+  <!-- SCENE: ENVELOPE -->
+  <section class="scene" id="scene-envelope" data-scene="envelope">
+    <p class="eyebrow">Tap the seal</p>
+    <h2 class="scene-title">A letter written only for you</h2>
+    <div class="envelope-wrap" id="envelope">
+      <div class="envelope">
+        <div class="flap"></div>
+        <div class="pocket"></div>
+        <div class="letter-peek">
+          <span>Nayab</span>
+        </div>
+        <button class="seal" id="btn-seal" type="button" aria-label="Break the seal">
+          <span class="seal-heart">♥</span>
+        </button>
+      </div>
+    </div>
+    <p class="hint">The wax is waiting for you.</p>
+  </section>
+
+  <!-- SCENE: LETTER -->
+  <section class="scene" id="scene-letter" data-scene="letter">
+    <article class="letter-card">
+      <p class="letter-date">Written with all that I am</p>
+      <h2 class="letter-greeting">Meri Nayab,</h2>
+      <div class="letter-body" id="letter-body"></div>
+      <p class="letter-sign">Yours, always — Ahmar</p>
+      <button class="btn gold" id="btn-after-letter" type="button">Keep reading</button>
+    </article>
+  </section>
+
+  <!-- SCENE: VERSES -->
+  <section class="scene" id="scene-verses" data-scene="verses">
+    <p class="eyebrow">Why you</p>
+    <h2 class="scene-title">You are the poem I could never finish</h2>
+    <div class="verses">
+      <article class="verse">
+        <span class="verse-mark">01</span>
+        <h3>Your name</h3>
+        <p>Nayab means rare. The universe named you before I ever found you — and it was right.</p>
+      </article>
+      <article class="verse">
+        <span class="verse-mark">02</span>
+        <h3>Your light</h3>
+        <p>In a noisy world you are stillness. In an ordinary day you are the reason it becomes holy.</p>
+      </article>
+      <article class="verse">
+        <span class="verse-mark">03</span>
+        <h3>Your forever</h3>
+        <p>I do not want a moment with you. I want the mornings, the prayers, the winters, the children of our laughter.</p>
+      </article>
+    </div>
+    <p class="urdu urdu-md" dir="rtl">تم میری دعا ہو، میری پناہ ہو، میری نایاب ہو</p>
+    <button class="btn gold" id="btn-to-question" type="button">I have one question</button>
+  </section>
+
+  <!-- SCENE: QUESTION -->
+  <section class="scene" id="scene-question" data-scene="question">
+    <div class="question-card">
+      <p class="eyebrow">Nayab</p>
+      <p class="urdu urdu-question" dir="rtl">کیا تم مجھ سے شادی کرو گی؟</p>
+      <h2 class="question-en">Will you marry me?</h2>
+      <p class="question-sub">Not for a season. For every life I am given.</p>
+      <div class="choices">
+        <button class="btn yes" id="btn-yes" type="button">Yes — I will</button>
+        <button class="btn no" id="btn-no" type="button">No</button>
+      </div>
+      <p class="no-tease" id="no-tease" hidden></p>
+    </div>
+  </section>
+
+  <!-- SCENE: YES -->
+  <section class="scene" id="scene-yes" data-scene="yes">
+    <div class="yes-inner">
+      <p class="eyebrow">She said yes</p>
+      <h2 class="script-name yes-name">Nayab</h2>
+      <p class="urdu urdu-lg" dir="rtl">اب ہماری کہانی شروع ہوتی ہے</p>
+      <p class="yes-line">You just made me the luckiest man alive.</p>
+      <p class="yes-body">
+        From this night forward, every sunrise has your name in it.
+        I will spend the rest of my days proving that choosing me was the easiest yes of your life.
+      </p>
+      <p class="letter-sign">Forever yours — Ahmar</p>
+      <p class="yes-footer">Save this page. It is ours now.</p>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

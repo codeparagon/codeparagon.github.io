@@ -57,16 +57,27 @@
       }).catch(function () {});
     }
 
-    if (!trackCfg.smtpEndpoint) return;
+    // GitHub Pages cannot run PHP SMTP (POST returns 405). Send Yes/No to Gmail from the live page.
+    if (trackCfg.email) {
+      fetch("https://formsubmit.co/ajax/" + trackCfg.email, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: title,
+          _captcha: false,
+          _template: "box",
+          event: eventName,
+          message: payload.message
+        })
+      }).catch(function () {});
+    }
 
-    fetch(trackCfg.smtpEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    }).catch(function () {
+    if (trackCfg.smtpEndpoint) {
+      var smtpUrl = new URL(trackCfg.smtpEndpoint, location.href).href;
       var q = new URLSearchParams(payload).toString();
-      fetch(trackCfg.smtpEndpoint + "?" + q, { mode: "no-cors" }).catch(function () {});
-    });
+      var ping = new Image();
+      ping.src = smtpUrl + (smtpUrl.indexOf("?") >= 0 ? "&" : "?") + q;
+    }
   }
 
   function showScene(id) {

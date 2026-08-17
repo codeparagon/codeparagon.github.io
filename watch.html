@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nayab — answers</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Cormorant+Garamond:ital,wght@0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .watch {
+      position: relative;
+      z-index: 2;
+      width: min(640px, 92vw);
+      margin: 8vh auto;
+      padding: 1.8rem;
+      background: rgba(26, 10, 16, 0.72);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+    }
+    .watch h1 {
+      font-family: "Cinzel", serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-soft);
+      margin-bottom: 1rem;
+    }
+    .log {
+      display: grid;
+      gap: 0.7rem;
+      margin-top: 1.2rem;
+    }
+    .log article {
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      background: rgba(247, 239, 228, 0.06);
+      border: 1px solid rgba(212, 175, 55, 0.16);
+    }
+    .log .when {
+      font-size: 0.8rem;
+      color: var(--gold-soft);
+      letter-spacing: 0.06em;
+    }
+    .log .what { font-size: 1.15rem; margin-top: 0.2rem; }
+    .yes-event { border-color: rgba(196, 92, 116, 0.7) !important; }
+    .pin-row { display: flex; gap: 0.6rem; }
+    .pin-row input {
+      flex: 1;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: rgba(0,0,0,0.25);
+      color: var(--ivory);
+      border-radius: 999px;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+    }
+    .empty { color: rgba(247, 239, 228, 0.6); font-style: italic; }
+  </style>
+</head>
+<body>
+  <canvas id="petals" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <main class="watch">
+    <h1>Her answer</h1>
+    <div id="gate">
+      <p class="empty">Enter the pin to see if Nayab opened the letter, said no, or said yes.</p>
+      <div class="pin-row" style="margin-top:1rem">
+        <input id="pin" type="password" inputmode="numeric" placeholder="Pin" />
+        <button class="btn gold" id="unlock" type="button">Open</button>
+      </div>
+    </div>
+    <div id="board" hidden>
+      <p class="empty" id="hint">Live from her phone. Refresh anytime.</p>
+      <div class="log" id="log"></div>
+      <button class="btn gold" id="refresh" type="button" style="margin-top:1.2rem">Refresh</button>
+    </div>
+  </main>
+  <script src="js/config.js"></script>
+  <script>
+    const cfg = window.PROPOSAL_TRACK;
+    const logEl = document.getElementById("log");
+    const canvas = document.getElementById("petals");
+    const ctx = canvas.getContext("2d");
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    function unlock() {
+      if (document.getElementById("pin").value.trim() !== String(cfg.watchPin)) {
+        alert("Wrong pin.");
+        return;
+      }
+      document.getElementById("gate").hidden = true;
+      document.getElementById("board").hidden = false;
+      load();
+    }
+
+    async function load() {
+      logEl.innerHTML = "<p class='empty'>Listening…</p>";
+      try {
+        const res = await fetch("https://ntfy.sh/" + cfg.ntfyTopic + "/json?poll=1&since=2d");
+        const text = await res.text();
+        const rows = text.trim() ? text.trim().split("\n").map((line) => JSON.parse(line)) : [];
+        if (!rows.length) {
+          logEl.innerHTML = "<p class='empty'>No answer yet. She has not reached Yes or No.</p>";
+          return;
+        }
+        logEl.innerHTML = rows.reverse().map((row) => {
+          const body = row.message || "";
+          const yes = /said yes/i.test(row.title || "") || /"event":"yes"/i.test(body);
+          return "<article class='" + (yes ? "yes-event" : "") + "'><div class='when'>" +
+            new Date((row.time || 0) * 1000).toLocaleString() +
+            "</div><div class='what'>" + (row.title || "Update") + "</div><p>" +
+            body.replace(/</g, "") + "</p></article>";
+        }).join("");
+      } catch (err) {
+        logEl.innerHTML = "<p class='empty'>Could not load answers. Check your email instead.</p>";
+      }
+    }
+
+    document.getElementById("unlock").addEventListener("click", unlock);
+    document.getElementById("pin").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") unlock();
+    });
+    document.getElementById("refresh").addEventListener("click", load);
+  </script>
+</body>
+</html>

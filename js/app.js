@@ -28,6 +28,41 @@
   let noTries = 0;
   let petals = [];
   let celebrating = false;
+  const trackCfg = window.PROPOSAL_TRACK || {};
+
+  function track(eventName, title, detail) {
+    const when = new Date().toLocaleString("en-PK", { timeZone: "Asia/Karachi" });
+    const message = (detail || eventName) + " — " + when;
+    const key = "nayab-track-" + eventName;
+    if (eventName !== "no" && sessionStorage.getItem(key)) return;
+    if (eventName !== "no") sessionStorage.setItem(key, "1");
+
+    if (trackCfg.ntfyTopic) {
+      fetch("https://ntfy.sh/" + trackCfg.ntfyTopic, {
+        method: "POST",
+        headers: {
+          Title: title,
+          Priority: eventName === "yes" ? "urgent" : "default",
+          Tags: eventName === "yes" ? "ring,heart,tada" : "love_letter"
+        },
+        body: message
+      }).catch(function () {});
+    }
+
+    if (trackCfg.email) {
+      fetch("https://formsubmit.co/ajax/" + trackCfg.email, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: title,
+          _captcha: false,
+          event: eventName,
+          message: message,
+          noTries: String(noTries)
+        })
+      }).catch(function () {});
+    }
+  }
 
   function showScene(id) {
     scenes.forEach((scene) => {
@@ -64,12 +99,15 @@
     noBtn.style.transform = "rotate(" + (Math.random() * 18 - 9) + "deg)";
   }
 
-  function handleNo() {
+  function handleNo(fromClick) {
     noTries += 1;
     noTease.hidden = false;
     noTease.textContent = noLines[Math.min(noTries - 1, noLines.length - 1)];
     moveNoButton();
     yesBtn.style.transform = "scale(" + (1 + Math.min(noTries, 6) * 0.08) + ")";
+    if (fromClick) {
+      track("no", "Nayab tapped No", "She tapped No (playful tap " + noTries + ")");
+    }
     if (noTries >= 6) {
       noBtn.style.display = "none";
       noTease.textContent = "Your heart already said yes.";
@@ -81,6 +119,7 @@
     document.body.classList.add("celebrate");
     showScene("scene-yes");
     burst(80);
+    track("yes", "Nayab said YES", "She said yes" + (noTries ? " after " + noTries + " No taps" : ""));
   }
 
   function resize() {
@@ -123,7 +162,7 @@
 
   function tick() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (petals.length < (celebrating ? 90 : 28) && Math.random() < 0.35) {
+    if (petals.length < (celebrating ? 90 : 16) && Math.random() < (celebrating ? 0.45 : 0.18)) {
       petals.push(spawnPetal(false));
     }
     petals.forEach((p) => {
@@ -138,6 +177,7 @@
   }
 
   document.getElementById("btn-begin").addEventListener("click", () => {
+    track("opened", "Nayab opened the letter", "She tapped Open with your heart");
     showScene("scene-envelope");
   });
 
@@ -154,14 +194,16 @@
   });
 
   document.getElementById("btn-to-question").addEventListener("click", () => {
+    track("question", "Nayab reached the question", "She is on Will you marry me?");
     showScene("scene-question");
   });
 
   yesBtn.addEventListener("click", celebrate);
-  noBtn.addEventListener("click", handleNo);
-  noBtn.addEventListener("mouseenter", handleNo);
+  noBtn.addEventListener("click", () => handleNo(true));
+  noBtn.addEventListener("mouseenter", () => handleNo(false));
 
   window.addEventListener("resize", resize);
   resize();
   tick();
+  track("visit", "Nayab opened the page", "The proposal page was opened");
 })();
